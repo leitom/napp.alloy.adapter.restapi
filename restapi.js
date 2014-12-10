@@ -102,7 +102,13 @@ function apiCall(_options, _callback) {
 			etag && xhr.setRequestHeader('IF-NONE-MATCH', etag);
 		}
 
-		xhr.send(_options.data || null);
+        // Prevent error "cannot parse response"
+        // https://github.com/viezel/napp.alloy.adapter.restapi/issues/56#issuecomment-66446984
+		if (_options.type != 'GET' && ! _.empty(_options.data)) {
+            xhr.send(_options.data);
+        } else {
+            xhr.send();
+        }
 	} else {
 		// we are offline
 		_callback({
